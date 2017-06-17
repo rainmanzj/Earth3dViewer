@@ -1,464 +1,91 @@
-﻿function AddModel(viewer)
-{
-Cesium.Math.setRandomNumberSeed(1234);
+﻿/*global define*/
+define([
+        'Cesium/Cesium',
+        'Cesium/Core/Cartesian3',
+        'Cesium/Core/defined',
+        'Cesium/Core/formatError',
+        'Cesium/Core/Math',
+        'Cesium/Core/objectToQuery',
+        'Cesium/Core/queryToObject',
+        'Cesium/DataSources/CzmlDataSource',
+        'Cesium/DataSources/GeoJsonDataSource',
+        'Cesium/DataSources/KmlDataSource',
+        'Cesium/Scene/createTileMapServiceImageryProvider',
+        'Cesium/Widgets/Viewer/Viewer',
+        'Cesium/Widgets/Viewer/viewerCesiumInspectorMixin',
+        'Cesium/Widgets/Viewer/viewerDragDropMixin',
+        'domReady!'
+    ], function(
+        Cesium,
+        Cartesian3,
+        defined,
+        formatError,
+        CesiumMath,
+        objectToQuery,
+        queryToObject,
+        CzmlDataSource,
+        GeoJsonDataSource,
+        KmlDataSource,
+        createTileMapServiceImageryProvider,
+        Viewer,
+        viewerCesiumInspectorMixin,
+        viewerDragDropMixin) {
+    'use strict';
 
+    var test=function(viewer)
+    {
+        alert("test");
+        createModel(viewer,'/Users/zhangjie/Desktop/02data/03github/Cesium/Apps/SampleData/models/CesiumMan/Cesium_Man.gltf', 5000.0);
+       
+     
+    };
 
-var entities = viewer.entities;
+    function createModel(viewer, url, height) {
+	    viewer.entities.removeAll();
+	    alert("test1");  
+	    var position = Cesium.Cartesian3.fromDegrees(-109.080842,45.002073, height);
+	    var heading = Cesium.Math.toRadians(135);
+	    var pitch = 0;
+	    var roll = 0;
+	    var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+	    var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+        alert("test2");
+        var wyoming = viewer.entities.add({  //添加一个实体，仅需要传递一个简单JSON对象，返回值是一个Entity对象  
+		  name : 'Wyoming',  
+		  polygon : {  
+		    hierarchy : Cesium.Cartesian3.fromDegreesArray([//一组地理坐标  
+		                              -109.080842,45.002073,  
+		                              -105.91517,45.002073,  
+		                              -104.058488,44.996596,  
+		                              -104.053011,43.002989,  
+		                              -104.053011,41.003906,  
+		                              -105.728954,40.998429,  
+		                              -107.919731,41.003906,  
+		                              -109.04798,40.998429,  
+		                              -111.047063,40.998429,  
+		                              -111.047063,42.000709,  
+		                              -111.047063,44.476286,  
+		                              -111.05254,45.002073]),  
+		    material : Cesium.Color.RED.withAlpha(0.5), //材质  
+		    outline : true, //是否显示轮廓  
+		    outlineColor : Cesium.Color.BLACK //轮廓的颜色  
+		  }  
+		});  
+        
+	    var entity = viewer.entities.add({
+	        name : url,
+	        position : position,
+	        orientation : orientation,
+	        model : {
+	            uri : url,
+	            minimumPixelSize : 128,
+	            maximumScale : 20000
+	        }
+	    });
+	    viewer.trackedEntity = entity;
+        viewer.zoomTo(entity)
+        alert("test3");
+    };
 
-var i;
-var height;
-var positions;
-var stripeMaterial = new Cesium.StripeMaterialProperty({
-    evenColor : Cesium.Color.WHITE.withAlpha(0.5),
-    oddColor : Cesium.Color.BLUE.withAlpha(0.5),
-    repeat : 5.0
+    return{test:test} ;
 });
-
-entities.add({
-    rectangle : {
-        coordinates : Cesium.Rectangle.fromDegrees(-92.0, 20.0, -86.0, 27.0),
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        stRotation : Cesium.Math.toRadians(45),
-        material : stripeMaterial
-    }
-});
-
-entities.add({
-    polygon : {
-        hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray([-107.0, 27.0,
-                                                                                    -107.0, 22.0,
-                                                                                    -102.0, 23.0,
-                                                                                    -97.0, 21.0,
-                                                                                    -97.0, 25.0])),
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        material : stripeMaterial
-    }
-});
-
-entities.add({
-    position : Cesium.Cartesian3.fromDegrees(-80.0, 25.0),
-    ellipse : {
-        semiMinorAxis : 300000.0,
-        semiMajorAxis : 500000.0,
-        rotation : Cesium.Math.toRadians(-40.0),
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        stRotation : Cesium.Math.toRadians(22),
-        material : stripeMaterial
-    }
-});
-
-entities.add({
-    position : Cesium.Cartesian3.fromDegrees(-72.0, 25.0),
-    ellipse : {
-        semiMinorAxis : 250000.0,
-        semiMajorAxis : 250000.0,
-        rotation : Cesium.Math.toRadians(-40.0),
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        stRotation : Cesium.Math.toRadians(90),
-        material : stripeMaterial
-    }
-});
-
-entities.add({
-    rectangle : {
-        coordinates : Cesium.Rectangle.fromDegrees(-118.0, 38.0, -116.0, 40.0),
-        extrudedHeight : 500000.0,
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        stRotation : Cesium.Math.toRadians(45),
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-entities.add({
-    position : Cesium.Cartesian3.fromDegrees(-117.0, 35.0),
-    ellipse : {
-        semiMinorAxis : 100000.0,
-        semiMajorAxis : 200000.0,
-        height : 100000.0,
-        extrudedHeight : 200000.0,
-        rotation : Cesium.Math.toRadians(90.0),
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-entities.add({
-    polygon : {
-        hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray([-118.0, 30.0,
-                                                                                    -115.0, 30.0,
-                                                                                    -117.1, 31.1,
-                                                                                    -118.0, 33.0])),
-        height : 300000.0,
-        extrudedHeight : 700000.0,
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-entities.add({
-    position : Cesium.Cartesian3.fromDegrees(-70.0, 45.0, 100000.0),
-    cylinder : {
-        hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray([-118.0, 30.0,
-                                                                                    -115.0, 30.0,
-                                                                                    -117.1, 31.1,
-                                                                                    -118.0, 33.0])),
-        length : 200000.0,
-        topRadius : 150000.0,
-        bottomRadius : 150000.0,
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-for (i = 0; i < 5; ++i) {
-    height = 100000.0 + (200000.0 * i);
-    entities.add({
-        position : Cesium.Cartesian3.fromDegrees(-106.0, 45.0, height),
-        box : {
-            dimensions : new Cesium.Cartesian3(90000.0, 90000.0, 90000.0),
-            outline : true,
-            outlineColor : Cesium.Color.WHITE,
-            outlineWidth : 2,
-            material : Cesium.Color.fromRandom({alpha : 0.5})
-        }
-    });
-
-    entities.add({
-        position : Cesium.Cartesian3.fromDegrees(-102.0, 45.0, height),
-        ellipsoid : {
-            radii : new Cesium.Cartesian3(45000.0, 45000.0, 90000.0),
-            outline : true,
-            outlineColor : Cesium.Color.WHITE,
-            outlineWidth : 2,
-            material : Cesium.Color.fromRandom({alpha : 0.5})
-        }
-    });
-    
-    entities.add({
-        position : Cesium.Cartesian3.fromDegrees(-98.0, 45.0, height),
-        ellipsoid : {
-            radii : new Cesium.Cartesian3(67500.0, 67500.0, 67500.0),
-            outline : true,
-            outlineColor : Cesium.Color.WHITE,
-            outlineWidth : 2,
-            material : Cesium.Color.fromRandom({alpha : 0.5})
-        }
-    });
-}
-
-entities.add({
-    wall : {
-        positions : Cesium.Cartesian3.fromDegreesArray([-95.0, 50.0,
-                                                        -85.0, 50.0,
-                                                        -75.0, 50.0]),
-        maximumHeights : [500000, 1000000, 500000],
-        minimumHeights : [0, 500000, 0],
-        outline : true,
-        outlineColor : Cesium.Color.LIGHTGRAY,
-        outlineWidth : 4,
-        material : Cesium.Color.fromRandom({alpha : 0.7})
-    }
-});
-
-entities.add({
-    rectangle : {
-        coordinates : Cesium.Rectangle.fromDegrees(-92.0, 30.0, -85.0, 40.0),
-        material : stripeMaterial
-    }
-});
-
-entities.add({
-    polygon : {
-        hierarchy : {
-            positions : Cesium.Cartesian3.fromDegreesArray([-109.0, 30.0,
-                                                            -95.0, 30.0,
-                                                            -95.0, 40.0,
-                                                            -109.0, 40.0]),
-            holes : [{
-                positions : Cesium.Cartesian3.fromDegreesArray([
-                    -107.0, 31.0,
-                    -107.0, 39.0,
-                    -97.0, 39.0,
-                    -97.0, 31.0
-                ]),
-                holes : [{
-                    positions : Cesium.Cartesian3.fromDegreesArray([
-                        -105.0, 33.0,
-                        -99.0, 33.0,
-                        -99.0, 37.0,
-                        -105.0, 37.0
-                    ]),
-                    holes : [{
-                        positions : Cesium.Cartesian3.fromDegreesArray([
-                            -103.0, 34.0,
-                            -101.0, 34.0,
-                            -101.0, 36.0,
-                            -103.0, 36.0
-                        ])
-                    }]
-                }]
-            }]
-        },
-        material : stripeMaterial
-    }
-});
-
-entities.add({
-    position : Cesium.Cartesian3.fromDegrees(-80.0, 35.0),
-    ellipse : {
-        semiMinorAxis : 200000.0,
-        semiMajorAxis : 500000.0,
-        rotation : Cesium.Math.toRadians(30.0),
-        material : stripeMaterial
-    }
-});
-
-entities.add({
-    position : Cesium.Cartesian3.fromDegrees(-72.0, 35.0),
-    ellipse : {
-        semiMinorAxis : 200000.0,
-        semiMajorAxis : 200000.0,
-        rotation : Cesium.Math.toRadians(30.0),
-        material : stripeMaterial
-    }
-});
-
-entities.add({
-    rectangle : {
-        coordinates : Cesium.Rectangle.fromDegrees(-110.0, 38.0, -107.0, 40.0),
-        height : 700000.0,
-        extrudedHeight : 1000000.0,
-        rotation : Cesium.Math.toRadians(45),
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-entities.add({
-    position : Cesium.Cartesian3.fromDegrees(-110.0, 35.0),
-    ellipse : {
-        semiMinorAxis : 100000.0,
-        semiMajorAxis : 200000.0,
-        height : 300000.0,
-        extrudedHeight : 700000.0,
-        rotation : Cesium.Math.toRadians(-40.0),
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-entities.add({
-    polygon : {
-        hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray([-113.0, 30.0,
-                                                                                    -110.0, 30.0,
-                                                                                    -110.0, 33.0,
-                                                                                    -111.5, 31.0,
-                                                                                    -113.0, 33.0])),
-        extrudedHeight : 300000.0,
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-entities.add({
-    position : Cesium.Cartesian3.fromDegrees(-70.0, 40.0, 200000.0),
-    cylinder : {
-        hierarchy : new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray([-118.0, 30.0,
-                                                                                    -115.0, 30.0,
-                                                                                    -117.1, 31.1,
-                                                                                    -118.0, 33.0])),
-        length : 400000.0,
-        topRadius : 0.0,
-        bottomRadius : 200000.0,
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-
-for (i = 0; i < 5; ++i) {
-    height = 200000.0 * i;
-
-    entities.add({
-        position : Cesium.Cartesian3.fromDegrees(-65.0, 35.0),
-        ellipse : {
-            semiMinorAxis : 200000.0,
-            semiMajorAxis : 200000.0,
-            height : height,
-            material : Cesium.Color.fromRandom({alpha : 0.5})
-        }
-    });
-    
-    entities.add({
-        rectangle : {
-            coordinates : Cesium.Rectangle.fromDegrees(-67.0, 27.0, -63.0, 32.0),
-            height : height,
-            material : Cesium.Color.fromRandom({alpha : 0.5})
-        }
-    });
-}
-
-for (i = 0; i < 5; ++i) {
-    height = 100000.0 + (200000.0 * i);
-    entities.add({
-        position : Cesium.Cartesian3.fromDegrees(-108.0, 45.0, height),
-        box : {
-            dimensions : new Cesium.Cartesian3(90000.0, 90000.0, 90000.0),
-            material : Cesium.Color.fromRandom({alpha : 1.0})
-        }
-    });
-
-    entities.add({
-        position : Cesium.Cartesian3.fromDegrees(-104.0, 45.0, height),
-        ellipsoid : {
-            radii : new Cesium.Cartesian3(45000.0, 45000.0, 90000.0),
-            material : Cesium.Color.fromRandom({alpha : 1.0})
-        }
-    });
-    
-    entities.add({
-        position : Cesium.Cartesian3.fromDegrees(-100.0, 45.0, height),
-        ellipsoid : {
-            radii : new Cesium.Cartesian3(67500.0, 67500.0, 67500.0),
-            material : Cesium.Color.fromRandom({alpha : 1.0})
-        }
-    });
-}
-
-positions = [];
-for (i = 0; i < 40; ++i) {
-    positions.push(Cesium.Cartesian3.fromDegrees(-100.0 + i, 15.0));
-}
-
-entities.add({
-    polyline : {
-        positions : positions,
-        width : 10.0,
-        material : new Cesium.PolylineGlowMaterialProperty({
-            color : Cesium.Color.DEEPSKYBLUE,
-            glowPower : 0.25
-        })
-    }
-});
-
-positions = [];
-for (i = 0; i < 40; ++i) {
-    positions.push(Cesium.Cartesian3.fromDegrees(-100.0 + i, 9.0));
-}
-
-entities.add({
-    wall : {
-        positions : Cesium.Cartesian3.fromDegreesArrayHeights([-90.0, 43.0, 100000.0,
-                                                               -87.5, 45.0, 100000.0,
-                                                               -85.0, 43.0, 100000.0,
-                                                               -87.5, 41.0, 100000.0,
-                                                               -90.0, 43.0, 100000.0]),
-        material : new Cesium.CheckerboardMaterialProperty({
-            repeat : new Cesium.Cartesian2(20.0, 6.0)
-        })
-    }
-});
-
-entities.add({
-    corridor : {
-        positions : Cesium.Cartesian3.fromDegreesArray([-120.0, 45.0,
-                                                        -125.0, 50.0,
-                                                        -125.0, 55.0]),
-        width : 100000,
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-entities.add({
-    corridor : {
-        positions : Cesium.Cartesian3.fromDegreesArray([-120.0, 45.0,
-                                                        -125.0, 50.0,
-                                                        -125.0, 55.0]),
-        width : 100000,
-        height : 300000,
-        extrudedHeight : 400000,
-        material : Cesium.Color.fromRandom({alpha : 0.7})
-    }
-});
-
-entities.add({
-    corridor : {
-        positions : Cesium.Cartesian3.fromDegreesArray([-120.0, 45.0,
-                                                        -125.0, 50.0,
-                                                        -125.0, 55.0]),
-        width : 100000,
-        height : 700000,
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 4,
-        material : Cesium.Color.fromRandom({alpha : 0.7})
-    }
-});
-
-function starPositions(arms, rOuter, rInner) {
-    var angle = Math.PI / arms;
-    var pos = [];
-    for ( var i = 0; i < 2 * arms; i++) {
-        var r = (i % 2) === 0 ? rOuter : rInner;
-        var p = new Cesium.Cartesian2(Math.cos(i * angle) * r, Math.sin(i * angle) * r);
-        pos.push(p);
-    }
-    return pos;
-}
-
-entities.add({
-    polylineVolume : {
-        positions : Cesium.Cartesian3.fromDegreesArrayHeights([-102.0, 15.0, 100000.0,
-                                                               -105.0, 20.0, 200000.0,
-                                                               -110.0, 20.0, 100000.0]),
-        shape : starPositions(7, 30000.0, 20000.0),
-        outline : true,
-        outlineColor : Cesium.Color.WHITE,
-        outlineWidth : 1,
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-entities.add({
-    polylineVolume : {
-        positions : Cesium.Cartesian3.fromDegreesArray([-102.0, 15.0,
-                                                        -105.0, 20.0,
-                                                        -110.0, 20.0]),
-        shape : starPositions(7, 30000.0, 20000.0),
-        material : Cesium.Color.fromRandom({alpha : 1.0})
-    }
-});
-
-function computeCircle(radius) {
-    var positions = [];
-    for (var i = 0; i < 360; i++) {
-        var radians = Cesium.Math.toRadians(i);
-        positions.push(new Cesium.Cartesian2(radius * Math.cos(radians), radius * Math.sin(radians)));
-    }
-    return positions;
-}
-
-entities.add({
-    polylineVolume : {
-        positions : Cesium.Cartesian3.fromDegreesArray([-104.0, 13.0,
-                                                        -107.0, 18.0,
-                                                        -112.0, 18.0]),
-        shape : computeCircle(40000.0),
-        material : Cesium.Color.WHITE
-    }
-});
-
-viewer.zoomTo(viewer.entities);
-};

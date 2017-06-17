@@ -46,6 +46,7 @@
     <Content Include="CesiumViewerStartup.js" />
     <Content Include="index.html" />
     <Content Include="Images\ajax-loader.gif" />
+    <Content Include="js\init.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="earth3d.csproj" />
@@ -56,6 +57,12 @@
     <MonoDevelop>
       <Properties>
         <XspParameters Port="8080" Address="127.0.0.1" SslMode="None" SslProtocol="Default" KeyType="None" CertFile="" KeyFile="" PasswordOptions="None" Password="" Verbose="True" />
+        <Policies>
+          <TextStylePolicy TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" FileWidth="80" TabsToSpaces="True" scope="application/javascript">
+            <inheritsSet />
+            <inheritsScope />
+          </TextStylePolicy>
+        </Policies>
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>

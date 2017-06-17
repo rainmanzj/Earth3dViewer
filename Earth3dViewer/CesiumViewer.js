@@ -28,7 +28,8 @@ define([
         createTileMapServiceImageryProvider,
         Viewer,
         viewerCesiumInspectorMixin,
-        viewerDragDropMixin) {
+        viewerDragDropMixin,
+        init) {
     'use strict';
 
     /*
@@ -191,7 +192,7 @@ define([
         camera.moveStart.addEventListener(function() {
             if (!defined(updateTimer)) {
                 updateTimer = window.setInterval(saveCamera, 1000);
-            }
+            } 
         });
         camera.moveEnd.addEventListener(function() {
             if (defined(updateTimer)) {
@@ -201,7 +202,7 @@ define([
             saveCamera();
         });
     }
-
+    alert("1")
     loadingIndicator.style.display = 'none';
-    AddModel(viewer);
+    init.test(viewer);
 });
