@@ -34,7 +34,6 @@ define([
 
     var test=function(viewer)
     {
-        alert("test");
         createModel(viewer,'/Users/zhangjie/Desktop/02data/03github/Cesium/Apps/SampleData/models/CesiumMan/Cesium_Man.gltf', 5000.0);
        
      
@@ -42,14 +41,14 @@ define([
 
     function createModel(viewer, url, height) {
 	    viewer.entities.removeAll();
-	    alert("test1");  
+
 	    var position = Cesium.Cartesian3.fromDegrees(-109.080842,45.002073, height);
 	    var heading = Cesium.Math.toRadians(135);
 	    var pitch = 0;
 	    var roll = 0;
 	    var hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
 	    var orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-        alert("test2");
+
         var wyoming = viewer.entities.add({  //添加一个实体，仅需要传递一个简单JSON对象，返回值是一个Entity对象  
 		  name : 'Wyoming',  
 		  polygon : {  
@@ -71,7 +70,17 @@ define([
 		    outlineColor : Cesium.Color.BLACK //轮廓的颜色  
 		  }  
 		});  
-        
+
+        var blueBox = viewer.entities.add({//蓝色盒子
+	    name : 'Blue box',
+	    position: Cesium.Cartesian3.fromDegrees(-114.0, 30.0, 0.0),//三维笛卡尔点（x，y，z）
+	    box : {
+	        dimensions : new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),//dimensions 尺寸
+	        material : Cesium.Color.BLUE//材质蓝色
+	            }
+	    });
+
+
 	    var entity = viewer.entities.add({
 	        name : url,
 	        position : position,
@@ -84,7 +93,22 @@ define([
 	    });
 	    viewer.trackedEntity = entity;
         viewer.zoomTo(entity)
-        alert("test3");
+
+        var canvas = viewer.canvas;
+        var pick= new Cesium.Cartesian2(window.innerWidth,window.innerHeight);
+
+	    var handler = new Cesium.ScreenSpaceEventHandler(canvas);
+	    handler.setInputAction(function(click){
+            var pnt=click.position;
+	        var clickX=click.position.x;
+	        var clickY=click.position.y;
+            var pick1= viewer.scene.globe.pick(viewer.camera.getPickRay(pnt), viewer.scene);
+            var geoPt1= viewer.scene.globe.ellipsoid.cartesianToCartographic(pick1);
+            var lon=geoPt1.longitude / Math.PI * 180;
+            var lat=geoPt1.latitude / Math.PI * 180;
+	        alert("平面坐标 x:"+pick1.x+" y:"+pick1.y+"\n地理坐标 lon:"+lon+" lat:"+lat);
+	    },Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
     };
 
     return{test:test} ;
