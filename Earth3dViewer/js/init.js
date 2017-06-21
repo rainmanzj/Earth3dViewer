@@ -106,7 +106,7 @@ define([
             var geoPt1= viewer.scene.globe.ellipsoid.cartesianToCartographic(pick1);
             var lon=geoPt1.longitude / Math.PI * 180;
             var lat=geoPt1.latitude / Math.PI * 180;
-	        alert("平面坐标 x:"+pick1.x+" y:"+pick1.y+"\n地理坐标 lon:"+lon+" lat:"+lat);
+	        alert("平面坐标 x:"+pick1.x+"y:"+pick1.y+"\n地理坐标 lon:"+lon+"lat:"+lat);
 	    },Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     };

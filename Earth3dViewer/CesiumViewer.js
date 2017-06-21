@@ -202,7 +202,7 @@ define([
             saveCamera();
         });
     }
-    alert("1")
+
     loadingIndicator.style.display = 'none';
     init.test(viewer);
 });
