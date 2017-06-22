@@ -31,7 +31,7 @@ define([
         viewerDragDropMixin,
         init) {
     'use strict';
-
+    alert("2");
     /*
      * 'debug'  : true/false,   // Full WebGL error reporting at substantial performance cost.
      * 'lookAt' : CZML id,      // The CZML ID of the object to track at startup.

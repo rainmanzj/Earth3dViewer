@@ -1,8 +1,8 @@
 ﻿<Properties StartupConfiguration="{C5131470-582F-4BA0-9B7B-4A98630E0B8F}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Earth3dViewer/CesiumViewer.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Earth3dViewer/js/init.js">
     <Files>
-      <File FileName="Earth3dViewer/CesiumViewer.js" Line="75" Column="68" />
-      <File FileName="Earth3dViewer/js/init.js" Line="111" Column="6" />
+      <File FileName="Earth3dViewer/CesiumViewer.js" Line="135" Column="46" />
+      <File FileName="Earth3dViewer/js/init.js" Line="39" Column="6" />
       <File FileName="Earth3dViewer/CesiumViewerStartup.js" Line="10" Column="20" />
       <File FileName="Earth3dViewer/index.html" Line="1" Column="1" />
     </Files>
